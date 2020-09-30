@@ -11,13 +11,13 @@ interface Events {
   "LogLine": (ev: { line: string[], rawLine: string }) => void;
   "ChangeZone": (ev: { zoneID: string }) => void;
   "ChangePrimaryPlayer": (ev: { charID: string, charName: string }) => void;
-  "OnlineStatusChanged": (ev: { target: string, rawStatus: number, status: string}) => void;
+  "OnlineStatusChanged": (ev: { target: string, rawStatus: number, status: string }) => void;
   "PartyChanged": (ev: { party: Party[] }) => void;
 }
 
 declare function addOverlayListener<E extends keyof Events>(
-    event: E, listener: Events[E]
-  ): void;
+  event: E, listener: Events[E]
+): void;
 
 export {
   addOverlayListener,
