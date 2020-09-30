@@ -51,7 +51,10 @@ class ActionMonitor {
   }
 
   onPartyChanged(party: Party[]) {
-    this.party = party;
+    // TODO: This array might contain non-party members?
+    this.party = party.filter((member: Party): boolean => {
+      return member.inParty;
+    });
   }
 
   onNetLog(line: string[], rawLine: string) {
@@ -75,7 +78,7 @@ class ActionMonitor {
       const m = rawLine.match(this.kAnybodyUseAbility);
       if (m) {
         if (isPartyMember(m.groups?.sourceId)) {
-          // dispatch to timer?
+          // TODO: dispatch to timer?
         }
       }
     }

@@ -13,6 +13,7 @@ interface Events {
   "ChangePrimaryPlayer": (ev: { charID: string, charName: string }) => void;
   "OnlineStatusChanged": (ev: { target: string, rawStatus: number, status: string }) => void;
   "PartyChanged": (ev: { party: Party[] }) => void;
+  // TODO: add all Event info
 }
 
 declare function addOverlayListener<E extends keyof Events>(
