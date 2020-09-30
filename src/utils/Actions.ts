@@ -1,4 +1,5 @@
 import { addOverlayListener } from "./ACTListener";
+import { NetRegexes } from "./Regexes";
 
 declare global {
   interface Window {
@@ -7,11 +8,19 @@ declare global {
 }
 
 class ActionMonitor {
+  init: boolean;
+  kAnybodyUseAbility: RegExp;
+
   constructor() {
+    this.init = false;
+
+    this.kAnybodyUseAbility = NetRegexes.ability({ capture: true });
+
     window.addOverlayListener("LogLine", (ev: {
       line: string[],
       rawLine: string,
     }) => {
+      if (!this.init) return;
       this.onLog(ev.line, ev.rawLine);
     });
   }
@@ -22,8 +31,10 @@ class ActionMonitor {
     switch (type) {
     case "21":
     case "22":
-      // Use some action
-      
+      // Used some action
+      if (rawLine.match(this.kAnybodyUseAbility)) {
+        // TODO check if party member
+      }
       break;
     default:
       break;
