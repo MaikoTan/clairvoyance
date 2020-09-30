@@ -19,7 +19,10 @@ declare function addOverlayListener<E extends keyof Events>(
   event: E, listener: Events[E]
 ): void;
 
+declare function startOverlayEvents(): void;
+
 export {
   addOverlayListener,
+  startOverlayEvents,
   Party,
 };

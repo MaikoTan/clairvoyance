@@ -1,9 +1,10 @@
-import { addOverlayListener, Party } from "./ACTListener";
+import { addOverlayListener, startOverlayEvents, Party } from "./ACTListener";
 import { NetRegexes } from "./Regexes";
 
 declare global {
   interface Window {
     addOverlayListener: typeof addOverlayListener;
+    startOverlayEvents: typeof startOverlayEvents;
   }
 }
 
@@ -20,6 +21,10 @@ const registerListeners = (monitor: ActionMonitor) => {
   }) => {
     monitor.onPartyChanged(ev.party);
   });
+
+  // registered all the listeners
+  // start the overlay
+  window.startOverlayEvents();
 };
 
 
