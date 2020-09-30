@@ -1,4 +1,4 @@
-import { addOverlayListener } from "./ACTListener";
+import { addOverlayListener, Party } from "./ACTListener";
 import { NetRegexes } from "./Regexes";
 
 declare global {
@@ -7,41 +7,77 @@ declare global {
   }
 }
 
+const registerListeners = (monitor: ActionMonitor) => {
+  window.addOverlayListener("LogLine", (ev: {
+    line: string[],
+    rawLine: string,
+  }) => {
+    monitor.onNetLog(ev.line, ev.rawLine);
+  });
+
+  window.addOverlayListener("PartyChanged", (ev: {
+    party: Party[],
+  }) => {
+    monitor.onPartyChanged(ev.party);
+  });
+};
+
+
 class ActionMonitor {
-  init: boolean;
+  inited: boolean;
+
+  /** current party members */
+  party: Party[];
+
+  /** Regex to match anybody casted ability */
   kAnybodyUseAbility: RegExp;
 
   constructor() {
-    this.init = false;
+    this.inited = false;
+    this.party = [];
 
     this.kAnybodyUseAbility = NetRegexes.ability({ capture: true });
 
-    window.addOverlayListener("LogLine", (ev: {
-      line: string[],
-      rawLine: string,
-    }) => {
-      if (!this.init) return;
-      this.onLog(ev.line, ev.rawLine);
-    });
+    this.init();
   }
 
-  onLog(line: string[], rawLine: string) {
+  init() {
+
+  }
+
+  onPartyChanged(party: Party[]) {
+    this.party = party;
+  }
+
+  onNetLog(line: string[], rawLine: string) {
+
+    const isPartyMember = (id?: string | null): boolean => {
+      if (!id) return false;
+      for (const member of this.party) {
+        if (id == member.id) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    /** log type, in decimal (not hex) */
     const type = line[0];
 
-    switch (type) {
-    case "21":
-    case "22":
-      // Used some action
-      if (rawLine.match(this.kAnybodyUseAbility)) {
-        // TODO check if party member
+    if (type == "21" || type == "22") {
+      // matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#15-networkability
+      // matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#16-networkaoeability
+      const m = rawLine.match(this.kAnybodyUseAbility);
+      if (m) {
+        if (isPartyMember(m.groups?.sourceId)) {
+          // dispatch to timer?
+        }
       }
-      break;
-    default:
-      break;
     }
   }
 }
 
 export {
   ActionMonitor,
+  registerListeners,
 };

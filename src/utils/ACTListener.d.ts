@@ -21,4 +21,5 @@ declare function addOverlayListener<E extends keyof Events>(
 
 export {
   addOverlayListener,
+  Party,
 };
