@@ -1,4 +1,4 @@
-import { addOverlayListener, startOverlayEvents, Party } from "./ACTListener";
+import { addOverlayListener, startOverlayEvents, Party as ACTParty } from "./ACTListener";
 import { NetRegexes } from "./Regexes";
 
 declare global {
@@ -17,7 +17,7 @@ const registerListeners = (monitor: ActionMonitor) => {
   });
 
   window.addOverlayListener("PartyChanged", (ev: {
-    party: Party[],
+    party: ACTParty[],
   }) => {
     monitor.onPartyChanged(ev.party);
   });
@@ -32,7 +32,7 @@ class ActionMonitor {
   inited: boolean;
 
   /** current party members */
-  party: Party[];
+  party: ACTParty[];
 
   /** Regex to match anybody casted ability */
   kAnybodyUseAbility: RegExp;
@@ -42,24 +42,18 @@ class ActionMonitor {
     this.party = [];
 
     this.kAnybodyUseAbility = NetRegexes.ability({ capture: true });
-
-    this.init();
   }
 
-  init() {
-
-  }
-
-  onPartyChanged(party: Party[]) {
+  onPartyChanged(party: ACTParty[]) {
     // TODO: This array might contain non-party members?
-    this.party = party.filter((member: Party): boolean => {
+    this.party = party.filter((member: ACTParty): boolean => {
       return member.inParty;
     });
   }
 
   onNetLog(line: string[], rawLine: string) {
 
-    const isPartyMember = (id?: string | null): boolean => {
+    const isPartyMember = (id?: string): boolean => {
       if (!id) return false;
       for (const member of this.party) {
         if (id == member.id) {
