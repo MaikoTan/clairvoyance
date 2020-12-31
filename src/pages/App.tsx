@@ -1,9 +1,8 @@
+import React, { useEffect } from "react";
+import { ActionMonitor, registerListeners } from "../utils/Monitor";
+import { PartyMember } from "../components/common/party_menber";
 import "./App.css";
 
-import { ActionMonitor, registerListeners } from "../utils/Monitor";
-import React, { useEffect } from "react";
-
-import { PartyMember } from "../components/common/party_menber";
 
 const actionMonitor = new ActionMonitor();
 
