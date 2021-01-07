@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { XIVAPI_ROOT } from "../../model/constants";
 import "./Icon.css";
 
 
@@ -20,7 +21,7 @@ const Icon: React.FC<IconProps> = (props: IconProps) => {
   React.useEffect(() => {
     let current = true;
     void (async () => {
-      const data = await (await fetch(`https://xivapi.com/${apiDataUrl}?columns=ID,Name,Icon`, {
+      const data = await (await fetch(`${XIVAPI_ROOT}/${apiDataUrl}?columns=ID,Name,Icon`, {
         mode: "cors"
       })).json();
       if (current) {
@@ -46,7 +47,7 @@ const Icon: React.FC<IconProps> = (props: IconProps) => {
     <>
       <div className={classnames.join(" ")}>
         <img
-          src={`https://xivapi.com/${apiData.Icon}`}
+          src={`${XIVAPI_ROOT}/${apiData.Icon}`}
           alt={apiData.Name}
         />
         <span className="text">{text ? text : ""}</span>
