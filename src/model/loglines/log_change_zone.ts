@@ -5,7 +5,7 @@ import Base from "./base";
  * 
  * matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#01-changezone
  */
-class Log0x01 extends Base {
+class LogChangeZone extends Base {
   constructor(loglines: string[]) {
     super(loglines);
   }
@@ -19,4 +19,4 @@ class Log0x01 extends Base {
   }
 }
 
-export default Log0x01;
+export default LogChangeZone;

@@ -7,7 +7,7 @@ import Base from "./base";
  * 
  * matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#26-networkstatuseffects
  */
-class Log0x26 extends Base {
+class LogNetworkStatusEffects extends Base {
   constructor(loglines: string[]) {
     super(loglines);
   }
@@ -65,4 +65,4 @@ class Log0x26 extends Base {
   }
 }
 
-export default Log0x26;
+export default LogNetworkStatusEffects;

@@ -5,7 +5,7 @@ import Base from "./base";
  * 
  * matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#1a-networkbuff
  */
-class Log0x1A extends Base {
+class LogNetworkBuff extends Base {
   constructor(loglines: string[]) {
     super(loglines);
   }
@@ -43,4 +43,4 @@ class Log0x1A extends Base {
   }
 }
 
-export default Log0x1A;
+export default LogNetworkBuff;

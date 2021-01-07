@@ -7,7 +7,7 @@ import Base from "./base";
  * 
  * matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#16-networkaoeability
  */
-class Log0x15 extends Base {
+class LogNetworkAbility extends Base {
   constructor(loglines: string[]) {
     super(loglines);
   }
@@ -69,4 +69,4 @@ class Log0x15 extends Base {
   }
 }
 
-export default Log0x15;
+export default LogNetworkAbility;

@@ -1,40 +1,40 @@
 import Base from "./base";
-import Log0x01 from "./log0x01";
-import Log0x0C from "./log0x0C";
-import Log0x14 from "./log0x14";
-import Log0x15 from "./log0x15";
-import Log0x19 from "./log0x19";
-import Log0x1A from "./log0x1A";
-import Log0x1E from "./log0x1E";
-import Log0x26 from "./log0x26";
+import LogChangeZone from "./log_change_zone";
+import LogPlayerStats from "./log_player_stats";
+import LogNetworkStartsCasting from "./log_network_starts_casting";
+import LogNetworkAbility from "./log_network_ability";
+import LogNetworkDeath from "./log_network_death";
+import LogNetworkBuff from "./log_network_buff";
+import LogNetworkBuffRemove from "./log_network_buff_remove";
+import LogNetworkStatusEffects from "./log_network_status_effects";
 
 class LogFactory {
   getLog(loglines: string[]): Base {
     switch (parseInt(loglines[0])) {
     case 0x01:
-      return new Log0x01(loglines);
+      return new LogChangeZone(loglines);
 
     case 0x0C:
-      return new Log0x0C(loglines);
+      return new LogPlayerStats(loglines);
 
     case 0x14:
-      return new Log0x14(loglines);
+      return new LogNetworkStartsCasting(loglines);
 
     case 0x15:
     case 0x16:
-      return new Log0x15(loglines);
+      return new LogNetworkAbility(loglines);
 
     case 0x19:
-      return new Log0x19(loglines);
+      return new LogNetworkDeath(loglines);
 
     case 0x1A:
-      return new Log0x1A(loglines);
+      return new LogNetworkBuff(loglines);
 
     case 0x1E:
-      return new Log0x1E(loglines);
+      return new LogNetworkBuffRemove(loglines);
 
     case 0x26:
-      return new Log0x26(loglines);
+      return new LogNetworkStatusEffects(loglines);
 
     default:
       return new Base(loglines);

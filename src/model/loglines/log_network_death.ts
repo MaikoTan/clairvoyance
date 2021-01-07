@@ -7,7 +7,7 @@ import Base from "./base";
  * 
  * matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#19-networkdeath
  */
-class Log0x19 extends Base {
+class LogNetworkDeath extends Base {
   constructor(loglines: string[]) {
     super(loglines);
   }
@@ -29,4 +29,4 @@ class Log0x19 extends Base {
   }
 }
 
-export default Log0x19;
+export default LogNetworkDeath;

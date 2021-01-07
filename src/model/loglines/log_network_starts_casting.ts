@@ -5,7 +5,7 @@ import Base from "./base";
  * 
  * matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#14-networkstartscasting
  */
-class Log0x14 extends Base {
+class LogNetworkStartsCasting extends Base {
   constructor(loglines: string[]) {
     super(loglines);
   }
@@ -39,4 +39,4 @@ class Log0x14 extends Base {
   }
 }
 
-export default Log0x14;
+export default LogNetworkStartsCasting;
