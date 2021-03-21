@@ -1,0 +1,8 @@
+.party-member {
+  width: 100vw;
+  display: flex;
+}
+
+.party-member div {
+  margin-left: auto;
+}

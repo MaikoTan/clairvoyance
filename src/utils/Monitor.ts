@@ -1,5 +1,4 @@
-import { addOverlayListener, startOverlayEvents, Party as ACTParty } from "./ACTListener";
-import { NetRegexes } from "./Regexes";
+import { Party as ACTParty, addOverlayListener, startOverlayEvents } from "./ACTListener";
 
 declare global {
   interface Window {
@@ -34,14 +33,54 @@ class ActionMonitor {
   /** current party members */
   party: ACTParty[];
 
-  /** Regex to match anybody casted ability */
-  kAnybodyUseAbility: RegExp;
+  /** Callback when actionUsed event */
+  actionUsedCallbacks: Function[];
+
+  /** Callback when gainBuff event */
+  gainBuffCallbacks: Function[];
 
   constructor() {
     this.inited = false;
     this.party = [];
 
-    this.kAnybodyUseAbility = NetRegexes.ability({ capture: true });
+    this.actionUsedCallbacks = [];
+    this.gainBuffCallbacks = [];
+  }
+
+  on(event: "ActionUsed", callback: (actor: string, id: string) => void): () => void;
+  on(event: "GainBuff", callback: (actor: string, id: string) => void): () => void;
+  on(event: string, callback: (...arg: any[]) => void): (() => void) | void {
+    if (event === "ActionUsed") {
+      this.actionUsedCallbacks.push(callback);
+
+      return () => {
+        this.actionUsedCallbacks = this.actionUsedCallbacks.slice(this.actionUsedCallbacks.indexOf(callback), 1);
+      };
+
+    } else if (event === "GainBuff") {
+      this.gainBuffCallbacks.push(callback);
+
+      return () => {
+        this.gainBuffCallbacks = this.gainBuffCallbacks.slice(this.gainBuffCallbacks.indexOf(callback), 1);
+      };
+
+    }
+  }
+
+  onActionUsed(o: {
+    sourceId?: string,
+    actionId?: string,
+  }) {
+    const {
+      sourceId,
+      actionId
+    } = o;
+
+    this.actionUsedCallbacks.forEach((func) => {
+      if (func) {
+        func(sourceId, actionId);
+      }
+    });
   }
 
   onPartyChanged(party: ACTParty[]) {
@@ -56,7 +95,7 @@ class ActionMonitor {
     const isPartyMember = (id?: string): boolean => {
       if (!id) return false;
       for (const member of this.party) {
-        if (id == member.id) {
+        if (id === member.id) {
           return true;
         }
       }
@@ -66,15 +105,18 @@ class ActionMonitor {
     /** log type, in decimal (not hex) */
     const type = line[0];
 
-    if (type == "21" || type == "22") {
+    if (type === "21" || type === "22") {
       // matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#15-networkability
       // matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#16-networkaoeability
-      const m = rawLine.match(this.kAnybodyUseAbility);
-      if (m) {
-        if (isPartyMember(m.groups?.sourceId)) {
-          // TODO: dispatch to timer?
-        }
-      }
+      // const m = rawLine.match(this.kAnybodyUseAbility);
+      // if (m) {
+      //   if (isPartyMember(m.groups?.sourceId)) {
+      //     this.onActionUsed({
+      //       sourceId: m.groups?.sourceId,
+      //       actionId: m.groups?.id,
+      //     });
+      //   }
+      // }
     }
   }
 }
