@@ -94,12 +94,7 @@ class ActionMonitor {
 
     const isPartyMember = (id?: string): boolean => {
       if (!id) return false;
-      for (const member of this.party) {
-        if (id === member.id) {
-          return true;
-        }
-      }
-      return false;
+      return this.party.some((member) => member.id === id);
     };
 
     /** log type, in decimal (not hex) */
