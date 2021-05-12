@@ -1,4 +1,5 @@
-import { Party as ACTParty, addOverlayListener, startOverlayEvents } from "./ACTListener";
+import { Party as ACTParty } from "../../third_party/cactbot/types/event";
+import { addOverlayListener, startOverlayEvents } from "./ACTListener";
 
 declare global {
   interface Window {
@@ -88,6 +89,7 @@ class ActionMonitor {
     this.party = party.filter((member: ACTParty): boolean => {
       return member.inParty;
     });
+    console.log(this.party);
   }
 
   onNetLog(line: string[], rawLine: string) {

@@ -1,23 +1,7 @@
-interface Party {
-  id: string;
-  name: string;
-  worldId: number;
-  job: number;
-  inParty: boolean;
-}
+import { EventMap, EventType } from "../../third_party/cactbot/types/event";
 
-interface Events {
-  "CombatData": () => void;
-  "LogLine": (ev: { line: string[], rawLine: string }) => void;
-  "ChangeZone": (ev: { zoneID: string }) => void;
-  "ChangePrimaryPlayer": (ev: { charID: string, charName: string }) => void;
-  "OnlineStatusChanged": (ev: { target: string, rawStatus: number, status: string }) => void;
-  "PartyChanged": (ev: { party: Party[] }) => void;
-  // TODO: add all Event info
-}
-
-declare function addOverlayListener<E extends keyof Events>(
-  event: E, listener: Events[E]
+declare function addOverlayListener<E extends EventType>(
+  event: E, listener: EventMap[E]
 ): void;
 
 declare function startOverlayEvents(): void;
