@@ -56,5 +56,13 @@
     ],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["config/**/*"],
+      "env": {
+        "node": true
+      }
+    }
+  ]
 }
