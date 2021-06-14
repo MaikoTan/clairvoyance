@@ -27,6 +27,11 @@ enum LogType {
 }
 
 class LogFactory {
+
+  static getType(loglines: string[]): string | undefined {
+    return Object.entries(LogType).find(([_key, value]) => value === loglines[0])?.[0];
+  }
+
   static getLog(loglines: string[]): Base {
     switch (parseInt(loglines[0])) {
     case LogType.ChangeZone:
