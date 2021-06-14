@@ -1,8 +1,6 @@
 import LogFactory from "../model/loglines/logfactory";
 import LogNetworkAbility from "../model/loglines/log_network_ability";
-import { Party as OverlayParty } from "./overlay_listener";
-
-import { addOverlayListener, startOverlayEvents } from "./overlay_listener";
+import { Party as OverlayParty, addOverlayListener, startOverlayEvents } from "./overlay_listener";
 
 declare global {
   interface Window {
@@ -12,16 +10,11 @@ declare global {
 }
 
 const registerListeners = (monitor: ActionMonitor) => {
-  window.addOverlayListener("LogLine", (ev: {
-    line: string[],
-    rawLine: string,
-  }) => {
+  window.addOverlayListener("LogLine", (ev) => {
     monitor.onNetLog(ev.line, ev.rawLine);
   });
 
-  window.addOverlayListener("PartyChanged", (ev: {
-    party: OverlayParty[],
-  }) => {
+  window.addOverlayListener("PartyChanged", (ev) => {
     monitor.onPartyChanged(ev.party);
   });
 
@@ -88,11 +81,11 @@ class ActionMonitor {
   }
 
   onPartyChanged(party: OverlayParty[]) {
+    console.log(party);
     // TODO: This array might contain non-party members?
     this.party = party.filter((member: OverlayParty): boolean => {
       return member.inParty;
     });
-    console.log(this.party);
   }
 
   onNetLog(line: string[], _rawLine: string) {
