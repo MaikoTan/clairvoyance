@@ -1,4 +1,4 @@
-import { EventMap, EventType } from "../../third_party/cactbot/types/event";
+import { EventMap, EventType } from "./cactbot/types/event";
 
 declare function addOverlayListener<E extends EventType>(
   event: E, listener: EventMap[E]

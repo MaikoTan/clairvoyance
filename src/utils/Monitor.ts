@@ -1,4 +1,5 @@
-import { Party as ACTParty } from "../../third_party/cactbot/types/event";
+import { Party as ACTParty } from "../cactbot/types/event";
+import NetRegexes from "../cactbot/resources/netregexes";
 import { addOverlayListener, startOverlayEvents } from "./ACTListener";
 
 declare global {
@@ -94,27 +95,27 @@ class ActionMonitor {
 
   onNetLog(line: string[], rawLine: string) {
 
-    const isPartyMember = (id?: string): boolean => {
-      if (!id) return false;
-      return this.party.some((member) => member.id === id);
-    };
-
     /** log type, in decimal (not hex) */
     const type = line[0];
 
     if (type === "21" || type === "22") {
       // matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#15-networkability
       // matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#16-networkaoeability
-      // const m = rawLine.match(this.kAnybodyUseAbility);
-      // if (m) {
-      //   if (isPartyMember(m.groups?.sourceId)) {
-      //     this.onActionUsed({
-      //       sourceId: m.groups?.sourceId,
-      //       actionId: m.groups?.id,
-      //     });
-      //   }
-      // }
+      const m = rawLine.match(NetRegexes.ability());
+      if (m) {
+        if (this.isPartyMember(m.groups?.sourceId)) {
+          this.onActionUsed({
+            sourceId: m.groups?.sourceId,
+            actionId: m.groups?.id,
+          });
+        }
+      }
     }
+  }
+
+  isPartyMember(id?: string): boolean {
+    if (!id) return false;
+    return this.party.some((member) => member.id === id);
   }
 }
 

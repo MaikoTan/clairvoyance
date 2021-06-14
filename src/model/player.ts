@@ -3,7 +3,7 @@ interface PlayerBase {
   name: string;
 }
 
-class Player {
+class Player implements PlayerBase {
   id: string;
   name: string;
 
