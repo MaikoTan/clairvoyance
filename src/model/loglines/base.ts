@@ -6,6 +6,8 @@ class Base {
   /** log type (decemble) */
   type: number;
 
+  typename: string;
+
   /** timestamp */
   timestamp: string;
 
@@ -13,6 +15,7 @@ class Base {
     this.lines = logline;
     this.type = parseInt(this.lines[0], 10);
     this.timestamp = this.lines[1];
+    this.typename = "null";
   }
 }
 

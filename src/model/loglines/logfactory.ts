@@ -27,7 +27,7 @@ enum LogType {
 }
 
 class LogFactory {
-  getLog(loglines: string[]): Base {
+  static getLog(loglines: string[]): Base {
     switch (parseInt(loglines[0])) {
     case LogType.ChangeZone:
       return new LogChangeZone(loglines);

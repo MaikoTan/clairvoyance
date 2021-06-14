@@ -1,6 +1,8 @@
-import { Party as ACTParty } from "../cactbot/types/event";
-import NetRegexes from "../cactbot/resources/netregexes";
-import { addOverlayListener, startOverlayEvents } from "./ACTListener";
+import LogFactory from "../model/loglines/logfactory";
+import LogNetworkAbility from "../model/loglines/log_network_ability";
+import { Party as OverlayParty } from "./overlay_listener";
+
+import { addOverlayListener, startOverlayEvents } from "./overlay_listener";
 
 declare global {
   interface Window {
@@ -18,7 +20,7 @@ const registerListeners = (monitor: ActionMonitor) => {
   });
 
   window.addOverlayListener("PartyChanged", (ev: {
-    party: ACTParty[],
+    party: OverlayParty[],
   }) => {
     monitor.onPartyChanged(ev.party);
   });
@@ -33,7 +35,7 @@ class ActionMonitor {
   inited: boolean;
 
   /** current party members */
-  party: ACTParty[];
+  party: OverlayParty[];
 
   /** Callback when actionUsed event */
   actionUsedCallbacks: Function[];
@@ -85,30 +87,24 @@ class ActionMonitor {
     });
   }
 
-  onPartyChanged(party: ACTParty[]) {
+  onPartyChanged(party: OverlayParty[]) {
     // TODO: This array might contain non-party members?
-    this.party = party.filter((member: ACTParty): boolean => {
+    this.party = party.filter((member: OverlayParty): boolean => {
       return member.inParty;
     });
     console.log(this.party);
   }
 
-  onNetLog(line: string[], rawLine: string) {
+  onNetLog(line: string[], _rawLine: string) {
 
-    /** log type, in decimal (not hex) */
-    const type = line[0];
+    const log = LogFactory.getLog(line);
 
-    if (type === "21" || type === "22") {
-      // matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#15-networkability
-      // matches: https://github.com/quisquous/cactbot/blob/main/docs/LogGuide.md#16-networkaoeability
-      const m = rawLine.match(NetRegexes.ability());
-      if (m) {
-        if (this.isPartyMember(m.groups?.sourceId)) {
-          this.onActionUsed({
-            sourceId: m.groups?.sourceId,
-            actionId: m.groups?.id,
-          });
-        }
+    if (log instanceof LogNetworkAbility) {
+      if (this.isPartyMember(log.sourceId)) {
+        this.onActionUsed({
+          sourceId: log.sourceId,
+          actionId: log.id,
+        });
       }
     }
   }

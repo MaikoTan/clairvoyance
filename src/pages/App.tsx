@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { ActionMonitor, registerListeners } from "../utils/Monitor";
+import { ActionMonitor, registerListeners } from "../utils/monitor";
 import { PartyMember } from "../components/common/party_menber";
 import "./App.css";
 
