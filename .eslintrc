@@ -59,7 +59,10 @@
   },
   "overrides": [
     {
-      "files": ["config/**/*"],
+      "files": [
+        "config/**/*",
+        "scripts/**/*"
+      ],
       "env": {
         "node": true
       }
