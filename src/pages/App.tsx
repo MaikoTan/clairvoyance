@@ -1,16 +1,9 @@
-import React, { useEffect } from "react";
-import { ActionMonitor, registerListeners } from "../utils/monitor";
+import React from "react";
 import { PartyMember } from "../components/common/party_menber";
 import "./App.css";
 
 
-const actionMonitor = new ActionMonitor();
-
 const App: React.FC = () => {
-
-  useEffect(() => {
-    registerListeners(actionMonitor);
-  });
 
   return (
     <div className="App">

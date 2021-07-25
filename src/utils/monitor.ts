@@ -1,6 +1,9 @@
+import EventEmitter from "eventemitter3";
+
 import LogFactory from "../model/loglines/logfactory";
 import LogNetworkAbility from "../model/loglines/log_network_ability";
-import { Party as OverlayParty, addOverlayListener, startOverlayEvents } from "./overlay_listener";
+import LogNetworkBuff from "../model/loglines/log_network_buff";
+import { Party as ActParty, addOverlayListener, startOverlayEvents } from "./overlay_listener";
 
 declare global {
   interface Window {
@@ -9,95 +12,53 @@ declare global {
   }
 }
 
-const registerListeners = (monitor: ActionMonitor) => {
-  window.addOverlayListener("LogLine", (ev) => {
-    monitor.onNetLog(ev.line, ev.rawLine);
-  });
 
-  window.addOverlayListener("PartyChanged", (ev) => {
-    monitor.onPartyChanged(ev.party);
-  });
-
-  // registered all the listeners
-  // start the overlay
-  window.startOverlayEvents();
-};
-
-
-class ActionMonitor {
+class ActionMonitor extends EventEmitter<Event> {
   inited: boolean;
 
   /** current party members */
-  party: OverlayParty[];
-
-  /** Callback when actionUsed event */
-  actionUsedCallbacks: Function[];
-
-  /** Callback when gainBuff event */
-  gainBuffCallbacks: Function[];
+  party: ActParty[];
 
   constructor() {
+    super();
+
     this.inited = false;
     this.party = [];
-
-    this.actionUsedCallbacks = [];
-    this.gainBuffCallbacks = [];
   }
 
-  on(event: "ActionUsed", callback: (actor: string, id: string) => void): () => void;
-  on(event: "GainBuff", callback: (actor: string, id: string) => void): () => void;
-  on(event: string, callback: (...arg: any[]) => void): (() => void) | void {
-    if (event === "ActionUsed") {
-      this.actionUsedCallbacks.push(callback);
-
-      return () => {
-        this.actionUsedCallbacks = this.actionUsedCallbacks.slice(this.actionUsedCallbacks.indexOf(callback), 1);
-      };
-
-    } else if (event === "GainBuff") {
-      this.gainBuffCallbacks.push(callback);
-
-      return () => {
-        this.gainBuffCallbacks = this.gainBuffCallbacks.slice(this.gainBuffCallbacks.indexOf(callback), 1);
-      };
-
-    }
+  emit<T extends Event>(event: T, ...args: Parameters<EventMap[T]>): boolean {
+    return super.emit(event, ...args);
   }
 
-  onActionUsed(o: {
-    sourceId?: string,
-    actionId?: string,
-  }) {
-    const {
-      sourceId,
-      actionId
-    } = o;
-
-    this.actionUsedCallbacks.forEach((func) => {
-      if (func) {
-        func(sourceId, actionId);
-      }
-    });
+  on<T extends Event>(event: T, callback: EventMap[T]): this {
+    super.on(event, callback);
+    return this;
   }
 
-  onPartyChanged(party: OverlayParty[]) {
+  once<T extends Event>(event: T, callback: EventMap[T]): this {
+    super.once(event, callback);
+    return this;
+  }
+
+  off<T extends Event>(event: T, callback: EventMap[T]): this {
+    super.off(event, callback);
+    return this;
+  }
+
+  onPartyChanged(party: ActParty[]) {
     console.log(party);
     // TODO: This array might contain non-party members?
-    this.party = party.filter((member: OverlayParty): boolean => {
+    this.party = party.filter((member: ActParty): boolean => {
       return member.inParty;
     });
   }
 
   onNetLog(line: string[], _rawLine: string) {
-
     const log = LogFactory.getLog(line);
 
     if (log instanceof LogNetworkAbility) {
       if (this.isPartyMember(log.sourceId)) {
-        this.onActionUsed({
-          sourceId: log.sourceId,
-          actionId: log.id,
-        });
+        this.emit("UsedAction", log.sourceId, log.id, log);
       }
     }
   }
@@ -106,9 +67,28 @@ class ActionMonitor {
     if (!id) return false;
     return this.party.some((member) => member.id === id);
   }
+
+  
+  registerListeners(): void {
+    window.addOverlayListener("LogLine", (ev) => {
+      this.onNetLog(ev.line, ev.rawLine);
+    });
+
+    window.addOverlayListener("PartyChanged", (ev) => {
+      this.onPartyChanged(ev.party);
+    });
+
+    // registered all the listeners
+    // start the overlay
+    window.startOverlayEvents();
+  }
 }
 
-export {
-  ActionMonitor,
-  registerListeners,
-};
+export const monitor = new ActionMonitor();
+
+export interface EventMap {
+  "UsedAction"(actor: string, actionId: string, log: LogNetworkAbility): void;
+  "GainEffect"(actor: string, effectId: string, log: LogNetworkBuff): void;
+}
+
+export type Event = keyof EventMap;

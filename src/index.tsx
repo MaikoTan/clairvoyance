@@ -5,6 +5,9 @@ import * as serviceWorker from "./serviceWorker";
 import App from "./pages/App";
 import React from "react";
 import ReactDOM from "react-dom";
+import { monitor } from "./utils/monitor";
+
+monitor.registerListeners();
 
 ReactDOM.render(
   <React.StrictMode>
