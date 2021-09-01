@@ -1,21 +1,18 @@
-interface PlayerBase {
+interface Player {
   id: string;
   name: string;
   level: number;
 }
 
-class Player implements PlayerBase {
-  id: string;
-  name: string;
-  level: number;
+export class Party extends Array<Player> {
 
-  constructor(player: PlayerBase) {
-    this.id = player.id;
-    this.name = player.name;
-    this.level = player.level;
+  override sort(compareFn?: (a: Player, b: Player) => number): this {
+    if (compareFn) {
+      super.sort(compareFn);
+      return this;
+    }
+    super.sort((a, b) => parseInt(a.id, 16) - parseInt(b.id, 16));
+    // FIXME: should then sort by job id.
+    return this;
   }
 }
-
-export {
-  Player,
-};
